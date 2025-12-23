@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Kinematics Calculator</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg-pastel: #ffffff;
+  --header-green: #d1e7dd;
+  --accent-pink: #f8bbd0;
+  --accent-green: #81c784;
+  --card-bg: #ffffff;
+  --text-main: #4a4a4a;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:"Montserrat", system-ui, sans-serif;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(0,0,0,0.06) 0px,
+      rgba(0,0,0,0.06) 1px,
+      transparent 1px,
+      transparent 40px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(0,0,0,0.06) 0px,
+      rgba(0,0,0,0.06) 1px,
+      transparent 1px,
+      transparent 40px
+    );
+  background-color: transparent;
+  color: var(--text-main);
+  -webkit-font-smoothing:antialiased;
+}
+
+.topbar{
+  display:flex;
+  align-items:center;
+  padding:03px 20px;
+  background: linear-gradient(135deg, #f8bbd0, #c8e6c9);
+  color: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.brand{
+  font-weight:700;
+  letter-spacing:1px;
+}
+
+.header{
+  background: linear-gradient(135deg, #fce4ec, #dcedc8);
+  color: #2e4a3e;
+  padding:07px 20px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  border-bottom: 2px solid #b2d8c5;
+}
+
+.header .icon{
+  font-weight:900;
+  font-size:28px;
+}
+.header .title{
+  font-size:18px;
+  font-weight:700;
+}
+
+.main-area{
+  display:flex;
+  flex-direction: column;
+  gap:10px;
+  padding:10px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.calculator-container{
+  width: 100%;
+  background: var(--card-bg);
+  border-radius:14px;
+  padding:24px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+}
+
+.calc-head h2{
+  margin:0;
+  font-size:18px;
+  color: #d81b60;
+}
+.calc-sub{
+  color: #777;
+  font-size:12px;
+  margin: 4px 0 15px 0;
+}
+
+label{ display:block; font-weight:600; margin-bottom:6px; font-size:12px;}
+
+.inputs-grid{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr); 
+  gap:05px;
+}
+
+.input-group{ margin-bottom:0px; }
+
+input[type="number"], select{
+  width:100%;
+  padding:10px;
+  border-radius:8px;
+  border:2px solid #f1f1f1;
+  font-size:14px;
+  outline:none;
+  background:#fafafa;
+  transition: border-color 0.2s;
+}
+input:focus { border-color: var(--accent-pink); }
+
+.controls{
+  display:flex;
+  gap:10px;
+  margin-top:10px;
+}
+
+.btn{
+  background: var(--accent-green);
+  color:#fff;
+  border:none;
+  padding:12px 20px;
+  border-radius:8px;
+  font-weight:700;
+  cursor:pointer;
+  transition: opacity 0.2s;
+}
+.btn:hover{ opacity: 0.9; }
+.btn.secondary{
+  background: var(--accent-pink);
+}
+
+#result{
+  margin-top:15px;
+  padding:10px;
+  border-radius:8px;
+  background: #f0fdf4;
+  border: 1px solid #dcfce7;
+  display:none;
+  font-weight:700;
+  color: #166534;
+}
+
+.stage{
+  width: 100%;
+  background: var(--card-bg);
+  border-radius:14px;
+  padding:20px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+}
+
+.stage h3 { margin-top: 0; font-size: 16px; color: #2e4a3e; }
+
+.canvas{
+  height:160px;
+  background: #fdfdfd;
+  border-radius:10px;
+  position:relative;
+  overflow:hidden;
+  border: 2px dashed #e8e8e8;
+}
+
+.ball{
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  position:absolute;
+  left:12px;
+  bottom:20px;
+  background: radial-gradient(circle at 30% 30%, #ffdee9, #f8bbd0, #d81b60);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.meta{ font-size:12px; color:#888; margin-top: 10px;}
+
+.corner-note{
+  font-size: 10px;
+  color: #aaa;
+  text-align: right;
+  margin-top: 00px;
+}
+
+@media (max-width:600px){
+  .inputs-grid{ grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">FINAL PROJECT ENGINEERING MECHANICS</div>
+</div>
+
+<div class="header">
+  <div class="icon">⚛</div>
+  <div class="title">MOVEIT!: KINEMATIC SIMULATOR</div>
+</div>
+
+<div class="main-area">
+
+  <div class="calculator-container">
+    <div class="calc-head">
+      <h2>Kinematics Calculator</h2>
+      <p class="calc-sub">Choose an equation and fill 3 fields to calculate the 4th.</p>
+    </div>
+
+    <div style="margin-bottom: 20px;">
+      <label for="equation-select">Equation Selection</label>
+      <select id="equation-select" onchange="updateInputs()">
+        <option value="">-- Choose an equation --</option>
+        <option value="eq1">Δx = v₀t + ½at²</option>
+        <option value="eq2">v = v₀ + at</option>
+        <option value="eq3">v² = v₀² + 2aΔx</option>
+        <option value="eq4">Δx = ((v₀ + v)/2)t</option>
+      </select>
+    </div>
+
+    <div id="inputs-container">
+      <div class="inputs-grid">
+        <div class="input-group" id="group-dx">
+          <label for="dx">Displacement (Δx) [m]</label>
+          <input type="number" id="dx" placeholder="0.00">
+        </div>
+
+        <div class="input-group" id="group-v0">
+          <label for="v0">Initial Velocity (v₀) [m/s]</label>
+          <input type="number" id="v0" placeholder="0.00">
+        </div>
+
+        <div class="input-group" id="group-v">
+          <label for="v">Final Velocity (v) [m/s]</label>
+          <input type="number" id="v" placeholder="0.00">
+        </div>
+
+        <div class="input-group" id="group-a">
+          <label for="a">Acceleration (a) [m/s²]</label>
+          <input type="number" id="a" placeholder="0.00">
+        </div>
+
+        <div class="input-group" id="group-t">
+          <label for="t">Time (t) [s]</label>
+          <input type="number" id="t" placeholder="0.00">
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="btn" onclick="calculate()">Calculate</button>
+      <button class="btn secondary" onclick="resetAll()">Reset</button>
+    </div>
+
+    <div id="result"></div>
+  </div>
+
+  <div class="stage">
+    <h3>Live Simulation</h3>
+    <div class="canvas" id="sim-canvas">
+      <div class="ball" id="ball"></div>
+    </div>
+    <div class="meta" id="scale-indicator">Enter values and calculate to see animation.</div>
+    <div class="corner-note">
+        BSCHE 2B • Estrada, Gualvez, Gutierrez, Manalili
+    </div>
+  </div>
+
+</div>
+
+<script>
+const ALL_VARS = ['dx','v0','v','a','t'];
+const EQUATION_MISSING_VAR = { eq1:'v', eq2:'dx', eq3:'t', eq4:'a' };
+
+function updateInputs(){
+  const selectedEq = document.getElementById('equation-select').value;
+  const missingVar = EQUATION_MISSING_VAR[selectedEq];
+  
+  ALL_VARS.forEach(varId=>{
+    const group = document.getElementById(`group-${varId}`);
+    group.style.opacity='1';
+    group.style.pointerEvents='auto';
+    document.getElementById(varId).value='';
+  });
+
+  document.getElementById('result').style.display='none';
+
+  if(selectedEq){
+    const missingGroup = document.getElementById(`group-${missingVar}`);
+    if(missingGroup) {
+        missingGroup.style.opacity='0.3';
+        missingGroup.style.pointerEvents='none';
+    }
+  }
+}
+
+function calculate(){
+  const selectedEq = document.getElementById('equation-select').value;
+  const resultDiv = document.getElementById('result');
+  if(!selectedEq){ alert('Please select an equation first.'); return; }
+
+  let knownVars = {}, emptyVarId = null;
+  
+  ALL_VARS.forEach(varId => {
+    const group = document.getElementById(`group-${varId}`);
+    const val = parseFloat(document.getElementById(varId).value);
+    if(group.style.opacity !== '0.3'){
+      if(isNaN(val)){ emptyVarId = varId; } 
+      else knownVars[varId] = val;
+    }
+  });
+
+  let result = null, unit = '', resultVarId = emptyVarId;
+  const {dx, v0, v, a, t} = knownVars;
+
+  if(selectedEq === 'eq1'){
+    if(emptyVarId === 'dx') result = v0*t + 0.5*a*t*t, unit = 'm';
+    else if(emptyVarId === 'v0') result = (dx - 0.5*a*t*t)/t, unit = 'm/s';
+    else if(emptyVarId === 'a') result = 2*(dx - v0*t)/(t*t), unit = 'm/s²';
+    else if(emptyVarId === 't') {
+        const disc = v0*v0 - 4*(0.5*a)*(-dx);
+        result = disc >= 0 ? (-v0 + Math.sqrt(disc))/a : null;
+        unit = 's';
+    }
+  } else if(selectedEq === 'eq2'){
+    if(emptyVarId === 'v') result = v0 + a*t, unit = 'm/s';
+    else if(emptyVarId === 'v0') result = v - a*t, unit = 'm/s';
+    else if(emptyVarId === 'a') result = (v - v0)/t, unit = 'm/s²';
+    else if(emptyVarId === 't') result = (v - v0)/a, unit = 's';
+  } else if(selectedEq === 'eq3'){
+    if(emptyVarId === 'v') result = Math.sqrt(Math.abs(v0*v0 + 2*a*dx)), unit = 'm/s';
+    else if(emptyVarId === 'v0') result = Math.sqrt(Math.abs(v*v - 2*a*dx)), unit = 'm/s';
+    else if(emptyVarId === 'a') result = (v*v - v0*v0)/(2*dx), unit = 'm/s²';
+    else if(emptyVarId === 'dx') result = (v*v - v0*v0)/(2*a), unit = 'm';
+  } else if(selectedEq === 'eq4'){
+    if(emptyVarId === 'dx') result = ((v0 + v)/2)*t, unit = 'm';
+    else if(emptyVarId === 'v0') result = (2*dx/t) - v, unit = 'm/s';
+    else if(emptyVarId === 'v') result = (2*dx/t) - v0, unit = 'm/s';
+    else if(emptyVarId === 't') result = 2*dx/(v0 + v), unit = 's';
+  }
+
+  if(result !== null) document.getElementById(resultVarId).value = result.toFixed(2);
+  
+  resultDiv.textContent = result !== null ? `Result: ${result.toFixed(2)} ${unit}` : '';
+  resultDiv.style.display = 'block';
+
+  const ballDx = parseFloat(document.getElementById('dx').value);
+  let ballTime = parseFloat(document.getElementById('t').value);
+
+  if(isNaN(ballTime) || ballTime <= 0) ballTime = 2; 
+  if(isNaN(ballDx)) return; 
+
+  animateBall(ballDx, ballTime);
+}
+
+function resetAll(){
+  location.reload();
+}
+
+function animateBall(distance, time){
+  const ball = document.getElementById('ball');
+  const canvasWidth = document.getElementById('sim-canvas').clientWidth - 60;
+
+  let scale = 50;
+  if(Math.abs(distance)*scale > canvasWidth) scale = canvasWidth / Math.abs(distance);
+
+  const travelPx = distance*scale;
+  const duration = Math.max(time, 0.5);
+
+  ball.style.transition = "none";
+  ball.style.transform = "translateX(0)";
+
+  setTimeout(() => {
+    ball.style.transition = `transform ${duration}s linear`;
+    ball.style.transform = `translateX(${travelPx}px)`;
+
+    document.getElementById('scale-indicator').textContent =
+      `Moving ${distance.toFixed(2)} m over ${duration.toFixed(2)} s (Scale: 1m = ${scale.toFixed(1)} px)`;
+  }, 20);
+}
+</script>
+</body>
+</html>
